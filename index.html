@@ -63,9 +63,17 @@
         pixel.style.backgroundColor = getRandomColor();
       }
 
+      // Store the pixel's position and color in the cache
+      localStorage.setItem("pixelPosition", pixel.style.left + "|" + pixel.style.top);
+      localStorage.setItem("pixelColor", pixel.style.backgroundColor);
+
       // Check if the page is filled with colored pixels
       var maxDots = (window.innerWidth * window.innerHeight) / (1 * 1); // Calculate the maximum possible dots based on screen size and pixel size
       if (document.body.children.length >= maxDots) {
+        // Clear the stored values from the cache
+        localStorage.removeItem("pixelPosition");
+        localStorage.removeItem("pixelColor");
+
         // Refresh the page to clear all dots
         location.reload();
       }
@@ -78,6 +86,17 @@
         color += letters[Math.floor(Math.random() * 16)];
       }
       return color;
+    }
+
+    // Retrieve the pixel's position and color from the cache
+    var savedPosition = localStorage.getItem("pixelPosition");
+    var savedColor = localStorage.getItem("pixelColor");
+
+    if (savedPosition && savedColor) {
+      var pixel = document.getElementById("pixel");
+      pixel.style.left = savedPosition.split("|")[0];
+      pixel.style.top = savedPosition.split("|")[1];
+      pixel.style.backgroundColor = savedColor;
     }
 
     setInterval(movePixel, 10);
