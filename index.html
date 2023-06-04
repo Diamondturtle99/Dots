@@ -64,12 +64,10 @@
       }
 
       // Check if the page is filled with colored pixels
-      if (document.body.children.length >= (window.innerWidth * window.innerHeight)) {
-        // Clear the trail and reset the page
-        while (document.body.firstChild) {
-          document.body.removeChild(document.body.firstChild);
-        }
-        document.body.appendChild(pixel);
+      var maxDots = (window.innerWidth * window.innerHeight) / (1 * 1); // Calculate the maximum possible dots based on screen size and pixel size
+      if (document.body.children.length >= maxDots) {
+        // Refresh the page to clear all dots
+        location.reload();
       }
     }
 
