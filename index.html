@@ -9,35 +9,28 @@
       position: absolute;
     }
 
-    .dot {
+    #trail {
       width: 1px;
       height: 1px;
+      background-color: black;
       position: absolute;
     }
   </style>
   <script>
-    function getRandomColor() {
-      var letters = "0123456789ABCDEF";
-      var color = "#";
-      for (var i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
-      return color;
-    }
-
-    function generateDot() {
-      var dot = document.createElement("div");
-      dot.className = "dot";
-      dot.style.left = Math.random() * (window.innerWidth - 1) + "px";
-      dot.style.top = Math.random() * (window.innerHeight - 1) + "px";
-      dot.style.backgroundColor = getRandomColor();
-      document.body.appendChild(dot);
-    }
-
     function movePixel() {
       var pixel = document.getElementById("pixel");
-      var left = parseInt(pixel.style.left);
-      var top = parseInt(pixel.style.top);
+      var trail = document.createElement("div");
+      trail.style.width = "1px";
+      trail.style.height = "1px";
+      trail.style.backgroundColor = pixel.style.backgroundColor;
+      trail.style.position = "absolute";
+      trail.style.left = pixel.style.left;
+      trail.style.top = pixel.style.top;
+
+      document.body.appendChild(trail);
+
+      var left = parseInt(pixel.style.left) || 0;
+      var top = parseInt(pixel.style.top) || 0;
       var previousColor = pixel.style.backgroundColor;
 
       // Randomly change the pixel's color
@@ -48,16 +41,16 @@
       var direction = Math.floor(Math.random() * 4);
       switch (direction) {
         case 0: // Move left
-          left -= 1;
+          left = Math.max(0, left - 1);
           break;
         case 1: // Move right
-          left += 1;
+          left = Math.min(window.innerWidth - 1, left + 1);
           break;
         case 2: // Move up
-          top -= 1;
+          top = Math.max(0, top - 1);
           break;
         case 3: // Move down
-          top += 1;
+          top = Math.min(window.innerHeight - 1, top + 1);
           break;
       }
 
@@ -70,16 +63,26 @@
         pixel.style.backgroundColor = getRandomColor();
       }
 
-      // Throttle the dot generation rate
-      var maxDots = 10000000000000000; // Set the maximum number of dots
-      var currentDots = document.getElementsByClassName("dot").length;
-      if (currentDots < maxDots) {
-        generateDot(); // Create a new dot
+      // Check if the page is filled with colored pixels
+      var maxDots = (window.innerWidth * window.innerHeight) / (1 * 1); // Calculate the maximum possible dots based on screen size and pixel size
+      if (document.body.children.length >= maxDots) {
+        // Refresh the page to clear all dots
+        location.reload();
       }
     }
 
-    setInterval(movePixel, 100); // Adjust the interval (in milliseconds) for the throttled generation rate
+    function getRandomColor() {
+      var letters = "0123456789ABCDEF";
+      var color = "#";
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    setInterval(movePixel, 10);
   </script>
+  <link rel="icon" href="/assets/favicon.png" type="image/png">
 </head>
 <body>
   <div id="pixel"></div>
