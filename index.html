@@ -12,36 +12,15 @@
       background-color: black;
       position: fixed;
     }
-
-    #trail {
-      width: 1px;
-      height: 1px;
-      background-color: black;
-      position: absolute;
-    }
   </style>
   <script>
     var db;
 
     function movePixel() {
       var pixel = document.getElementById("pixel");
-      var trail = document.createElement("div");
-      trail.style.width = "1px";
-      trail.style.height = "1px";
-      trail.style.backgroundColor = pixel.style.backgroundColor;
-      trail.style.position = "absolute";
-      trail.style.left = pixel.style.left;
-      trail.style.top = pixel.style.top;
-
-      document.body.appendChild(trail);
-
       var left = parseInt(pixel.style.left) || 0;
       var top = parseInt(pixel.style.top) || 0;
       var previousColor = pixel.style.backgroundColor;
-
-      // Randomly change the pixel's color
-      var randomColor = getRandomColor();
-      pixel.style.backgroundColor = randomColor;
 
       // Generate a random direction
       var direction = Math.floor(Math.random() * 4);
@@ -72,7 +51,7 @@
       // Store the pixel's position and color in IndexedDB
       var transaction = db.transaction(["progress"], "readwrite");
       var objectStore = transaction.objectStore("progress");
-      objectStore.put({ id: 1, position: pixel.style.left + "|" + pixel.style.top, color: pixel.style.backgroundColor });
+      objectStore.put({ id: "pixel", position: pixel.style.left + "|" + pixel.style.top, color: pixel.style.backgroundColor });
     }
 
     function getRandomColor() {
@@ -98,7 +77,7 @@
       // Retrieve the pixel's position and color from IndexedDB
       var transaction = db.transaction(["progress"], "readonly");
       var objectStore = transaction.objectStore("progress");
-      var getRequest = objectStore.get(1);
+      var getRequest = objectStore.get("pixel");
       getRequest.onsuccess = function (event) {
         var result = event.target.result;
         if (result) {
