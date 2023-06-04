@@ -63,20 +63,9 @@
         pixel.style.backgroundColor = getRandomColor();
       }
 
-      // Store the pixel's position and color in the cache
-      localStorage.setItem("pixelPosition", pixel.style.left + "|" + pixel.style.top);
-      localStorage.setItem("pixelColor", pixel.style.backgroundColor);
-
-      // Check if the page is filled with colored pixels
-      var maxDots = (window.innerWidth * window.innerHeight) / (1 * 1); // Calculate the maximum possible dots based on screen size and pixel size
-      if (document.body.children.length >= maxDots) {
-        // Clear the stored values from the cache
-        localStorage.removeItem("pixelPosition");
-        localStorage.removeItem("pixelColor");
-
-        // Refresh the page to clear all dots
-        location.reload();
-      }
+      // Store the pixel's position and color in cookies
+      document.cookie = "position=" + pixel.style.left + "|" + pixel.style.top;
+      document.cookie = "color=" + pixel.style.backgroundColor;
     }
 
     function getRandomColor() {
@@ -88,9 +77,20 @@
       return color;
     }
 
-    // Retrieve the pixel's position and color from the cache
-    var savedPosition = localStorage.getItem("pixelPosition");
-    var savedColor = localStorage.getItem("pixelColor");
+    // Retrieve the pixel's position and color from cookies
+    function getCookie(name) {
+      var cookieArr = document.cookie.split("; ");
+      for (var i = 0; i < cookieArr.length; i++) {
+        var cookiePair = cookieArr[i].split("=");
+        if (cookiePair[0] === name) {
+          return cookiePair[1];
+        }
+      }
+      return null;
+    }
+
+    var savedPosition = getCookie("position");
+    var savedColor = getCookie("color");
 
     if (savedPosition && savedColor) {
       var pixel = document.getElementById("pixel");
