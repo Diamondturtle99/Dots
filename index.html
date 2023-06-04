@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pixel Movement</title>
+  <style>
+    #pixel {
+      width: 1px;
+      height: 1px;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    var visitedPixels = {}; // Store the visited pixel locations
+    var totalPixels = window.innerWidth * window.innerHeight; // Total number of pixels in the page
+    var filledPixels = 0; // Counter for filled pixels
+
+    function getRandomColor() {
+      var letters = '0123456789ABCDEF';
+      var color = '#';
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    function movePixel() {
+      var pixel = document.getElementById('pixel');
+      var left = parseInt(pixel.style.left) || 0;
+      var top = parseInt(pixel.style.top) || 0;
+      var previousColor = pixel.style.backgroundColor;
+
+      // Change the color of the previous pixel
+      if (previousColor) {
+        document.elementFromPoint(left, top).style.backgroundColor = getRandomColor();
+        filledPixels++;
+      }
+
+      // Check if the page is completely filled
+      if (filledPixels >= totalPixels) {
+        // Reset the page by refreshing it
+        location.reload();
+        return;
+      }
+
+      // Update the position of the pixel
+      var randomDirection = Math.floor(Math.random() * 4);
+      switch (randomDirection) {
+        case 0: // Move left
+          left--;
+          break;
+        case 1: // Move right
+          left++;
+          break;
+        case 2: // Move up
+          top--;
+          break;
+        case 3: // Move down
+          top++;
+          break;
+      }
+
+      // Change color if the pixel returns to a previous position
+      var newPixelPosition = document.elementFromPoint(left, top);
+      if (visitedPixels[`${left},${top}`]) {
+        pixel.style.backgroundColor = getRandomColor();
+      } else {
+        visitedPixels[`${left},${top}`] = true;
+      }
+
+      // Move the pixel to the new position
+      pixel.style.left = left + 'px';
+      pixel.style.top = top + 'px';
+
+      setTimeout(movePixel, 10); // Move every 0.01 seconds (10 milliseconds)
+    }
+
+    movePixel(); // Start moving the pixel
+  </script>
+</body>
+</html>
