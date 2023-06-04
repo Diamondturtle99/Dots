@@ -63,12 +63,11 @@
         pixel.style.backgroundColor = getRandomColor();
       }
 
-      // Check if the page is filled with colored pixels
-      var maxDots = (window.innerWidth * window.innerHeight) / (1 * 1); // Calculate the maximum possible dots based on screen size and pixel size
-      if (document.body.children.length >= maxDots) {
-        // Refresh the page to clear all dots
-        location.reload();
-      }
+      // Update the URL parameters with the pixel's position and color
+      var url = new URL(window.location.href);
+      url.searchParams.set("position", pixel.style.left + "|" + pixel.style.top);
+      url.searchParams.set("color", pixel.style.backgroundColor);
+      history.replaceState(null, null, url.href);
     }
 
     function getRandomColor() {
@@ -78,6 +77,18 @@
         color += letters[Math.floor(Math.random() * 16)];
       }
       return color;
+    }
+
+    // Retrieve the pixel's position and color from the URL parameters
+    var urlParams = new URLSearchParams(window.location.search);
+    var savedPosition = urlParams.get("position");
+    var savedColor = urlParams.get("color");
+
+    if (savedPosition && savedColor) {
+      var pixel = document.getElementById("pixel");
+      pixel.style.left = savedPosition.split("|")[0];
+      pixel.style.top = savedPosition.split("|")[1];
+      pixel.style.backgroundColor = savedColor;
     }
 
     setInterval(movePixel, 10);
