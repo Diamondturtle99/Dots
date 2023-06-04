@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #pixel {
+      width: 1px;
+      height: 1px;
+      background-color: black;
+      position: absolute;
+    }
+
+    #trail {
+      width: 1px;
+      height: 1px;
+      background-color: black;
+      position: absolute;
+    }
+  </style>
+  <script>
+    function movePixel() {
+      var pixel = document.getElementById("pixel");
+      var trail = document.createElement("div");
+      trail.style.width = "1px";
+      trail.style.height = "1px";
+      trail.style.backgroundColor = pixel.style.backgroundColor;
+      trail.style.position = "absolute";
+      trail.style.left = pixel.style.left;
+      trail.style.top = pixel.style.top;
+
+      document.body.appendChild(trail);
+
+      var left = parseInt(pixel.style.left) || 0;
+      var top = parseInt(pixel.style.top) || 0;
+      var previousColor = pixel.style.backgroundColor;
+
+      // Randomly change the pixel's color
+      var randomColor = getRandomColor();
+      pixel.style.backgroundColor = randomColor;
+
+      // Generate a random direction
+      var direction = Math.floor(Math.random() * 4);
+      switch (direction) {
+        case 0: // Move left
+          left = Math.max(0, left - 1);
+          break;
+        case 1: // Move right
+          left = Math.min(window.innerWidth - 1, left + 1);
+          break;
+        case 2: // Move up
+          top = Math.max(0, top - 1);
+          break;
+        case 3: // Move down
+          top = Math.min(window.innerHeight - 1, top + 1);
+          break;
+      }
+
+      // Update the pixel's position
+      pixel.style.left = left + "px";
+      pixel.style.top = top + "px";
+
+      // If the pixel has been on this position before, change its color randomly
+      if (pixel.style.backgroundColor === previousColor) {
+        pixel.style.backgroundColor = getRandomColor();
+      }
+
+      // Check if the page is filled with colored pixels
+      if (document.body.children.length >= (window.innerWidth * window.innerHeight)) {
+        // Clear the trail and reset the page
+        while (document.body.firstChild) {
+          document.body.removeChild(document.body.firstChild);
+        }
+        document.body.appendChild(pixel);
+      }
+    }
+
+    function getRandomColor() {
+      var letters = "0123456789ABCDEF";
+      var color = "#";
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    setInterval(movePixel, 10);
+  </script>
+</head>
+<body>
+  <div id="pixel"></div>
+</body>
+</html>
